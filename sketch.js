@@ -5,7 +5,7 @@ var fedTime,lastFed,currentTime;
 var feed,addFood;
 var foodObj;
 var gameState,readState,back,milk;
-
+var Lastfeed;
 function preload(){
   //LOADING ALL THE IMAGES 
 sadDog=loadImage("Dog.png");
@@ -13,7 +13,7 @@ happyDog=loadImage("happy dog.png");
 garden=loadImage("Garden.png");
 washroom=loadImage("Wash Room.png");
 bedroom=loadImage("Bed Room.png");
-back=loadImage("download.png");
+
 }
 
 function setup() {
@@ -64,18 +64,37 @@ function draw() {
    }else{
     update("Hungry")
     foodObj.display();
+    if(currentTime>(lastFed+5)){
+      dog.addImage(sadDog);
+    }
+    dog.visible=true;
    }
    
    if(gameState!="Hungry"){
      feed.hide();
      addFood.hide();
-     dog.remove();
+    dog.visible=false;
    }else{
     feed.show();
     addFood.show();
-    dog.addImage(sadDog);
+  dog.visible=true;
    }
- 
+   var feedTime=database.ref('FeedTime');
+   feedTime.on("value",function(data){
+     Lastfeed=data.val();
+   })
+    foodObj.display();
+   textSize(30);
+   fill("pink");
+   if(Lastfeed>=12){
+     text("last Fed :"+Lastfeed%12+"pm",300,550);
+   }
+   else if(Lastfeed===0){
+     text("last Fed : 12am",500,450);
+   }
+   else{
+     text("last Fed :"+Lastfeed+"pm",300,550);
+   }
   drawSprites();
 }
 
